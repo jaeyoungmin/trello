@@ -12,8 +12,15 @@
         </div>
         <v-row>
           <v-col cols="8" class="left-side">
-            <DueDate :date="currentIssue.dueDate" />
-            <Description :descr="currentIssue.description" />
+            <DueDate
+              :init-date="currentIssue.dueDate"
+              @change-date="changeDate"
+            />
+            <!-- @change -date 커스텀 이벤트 발생  -->
+            <Description
+              :init-descr="currentIssue.description"
+              @change-descr="changeDescr"
+            />
             <CheckList :tasks="currentIssue.checklist" />
             <Activity :activities="currentIssue.activities" />
           </v-col>
@@ -29,6 +36,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import _ from 'lodash';
 export default {
   name: 'IssueDetail',
   data() {
@@ -48,6 +56,24 @@ export default {
     closeDetail() {
       this.$store.commit('toggleIsDetailShow');
     },
+    changeDate(date) {
+      // console.log('change date:', date);
+      this.$store.commit('fixDate', {
+        id: this.currentIssue.id,
+        dueDate: date,
+      });
+    },
+    changeDescr(text) {
+      // console.log('chage description :', text);
+      // this.$store.commit('fixDescr', {
+      //   id: this.currentIssue.id,
+      //   descr: text,
+      // });
+      let clone = _.cloneDeep(this.currentIssue);
+      clone.description = text;
+      this.$store.commit('editIssue', clone);
+    },
+    //npm install lodash 사용
   },
 };
 </script>

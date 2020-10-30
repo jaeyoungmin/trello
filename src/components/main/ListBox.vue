@@ -36,6 +36,9 @@ export default {
       return this.issues.filter((el) => el.listId === this.list.id);
     },
   },
+  methods: {
+    addList() {},
+  },
 
   // props: ['lists', 'issues'],
   /* computed: {

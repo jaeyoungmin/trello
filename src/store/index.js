@@ -118,6 +118,18 @@ export default new Vuex.Store({
     setCurrentIssue(state, payload) {
       state.currentIssue = payload;
     },
+    fixDate(state, payload) {
+      let target = state.issues.find((el) => el.id === payload.id);
+      target.dueDate = payload.dueDate;
+    },
+    fixDescr(state, payload) {
+      let target = state.issues.find((el) => el.id === payload.id);
+      target.description = payload.descr;
+    },
+    editIssue(state, payload) {
+      let target = state.issues.find((el) => el.id === payload.id);
+      Object.assign(target, payload);
+    }, //뮤테이션을 여러개 나누지 않고 한번에 state에 payload 시키기
   },
   actions: {},
   modules: {},

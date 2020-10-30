@@ -11,8 +11,13 @@
       <template v-slot:activator="{ on, attrs }">
         <v-row class="check-box d-flex align-center" no-gutters>
           <v-checkbox></v-checkbox>
-          <v-btn class="date-btn" small v-bind="attrs" v-on="on" elevation="1"
-            >{{ date }}{{ time }}</v-btn
+          <v-btn
+            class="date-btn"
+            small
+            v-bind="attrs"
+            v-on="on"
+            elevation="1"
+            >{{ date }}</v-btn
           >
         </v-row>
       </template>
@@ -24,12 +29,18 @@
 <script>
 export default {
   name: 'DueDate',
-  props: ['date'],
-  data: () => ({
-    // date: new Date().toISOString().substr(0, 10),
-    // time: new Date().toLocaleTimeString().substr(2, 5),
-    menu: false,
-  }),
+  props: ['initDate'],
+  data() {
+    return {
+      menu: false,
+      date: this.initDate,
+    };
+  },
+  watch: {
+    date(newValue) {
+      this.$emit('change-date', newValue);
+    },
+  },
 };
 </script>
 
