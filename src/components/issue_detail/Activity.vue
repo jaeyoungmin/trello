@@ -8,15 +8,20 @@
       <v-avatar><v-img :src="profileImg"></v-img></v-avatar>
       <v-text-field
         outlined
-        v-model="newText"
+        solo
+        flat
+        v-model="newComment"
         placeholder="Write a comments..."
         class="comment-text-field"
-        @keyup.enter="addComment"
+        @keyup.enter="save"
       >
+        <template v-slot:append
+          ><v-btn color="green" text small @click="save">save</v-btn></template
+        >
       </v-text-field>
     </v-row>
     <div class="activity-list-wrapper">
-      <v-row no-gutters v-for="(comment, i) in activities" :key="i">
+      <v-row no-gutters v-for="(comment, i) in orderedActivities" :key="i">
         <div class="profile-wrapper">
           <v-avatar><v-img :src="comment.imgSrc"></v-img></v-avatar>
         </div>
@@ -25,13 +30,41 @@
             <strong>{{ comment.name }}</strong
             ><span class="date-text">{{ formatDate(comment.createdAt) }}</span>
           </p>
-          <v-card class="text-card">
-            <p>{{ comment.text }}</p>
-          </v-card>
+          <div>
+            <v-text-field
+              class="comment-input mb-2"
+              v-model="comment.text"
+              :readonly="isEdit !== i"
+              :dark="isEdit === i"
+              solo
+              hide-details
+            ></v-text-field>
+          </div>
           <div class="activity-actions">
-            <button>Edit</button>
+            <button class="mr-2" @click="isEdit = i">Edit</button>
             <button>Delete</button>
           </div>
+
+          <!-- <v-card class="text-card" v-model="editComment">
+            <p>{{ comment.text }}</p>
+          </v-card> -->
+          <!-- <div class="activity-actions">
+            <div class="edit-form">
+              <v-textarea
+                flat
+                solo
+                outlined
+                auto-grow
+                rows="1"
+                v-if="isEdit == i"
+              ></v-textarea>
+            </div>
+            <button @click="isEdit = i">
+              Edit
+            </button>
+            <button>Delete</button>
+          </div>
+        </div> -->
         </div>
       </v-row>
     </div>
@@ -39,13 +72,16 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import moment from 'moment';
 export default {
   name: 'Activity',
   props: ['activities'],
   data() {
     return {
-      newText: '',
+      newComment: '',
+      isEdit: false,
+      editComment: '',
       profileImg:
         'https://jmagazine.joins.com/_data/photo/2019/04/2949993301_QGcF14Px_1.jpg',
       // activities: [
@@ -66,24 +102,41 @@ export default {
       // ],
     };
   },
-
+  computed: {
+    newCommentId() {
+      return (
+        this.activities.reduce((acc, cur) => {
+          acc = Math.max(acc, cur.id);
+          return acc;
+        }, 0) + 1
+      );
+    },
+    orderedActivities() {
+      let clone = _.cloneDeep(this.activities);
+      return clone.sort(
+        (a, b) => moment(b.createdAt).unix() - moment(a.createdAt).unix()
+      );
+    },
+  },
   methods: {
     formatDate(date) {
       let created = moment(date);
       //console.log(created.format('dddd, MMM, Do'));
       // console.log(moment().utc().format()); utc시간으로 변환
       //console.log(moment().valueOf()); uixMillisecond시간으로 변환
-      return created.format('dddd, MMM, Do');
+      return created.format('dddd. MMM. Do. [at] HH:mm a');
+      // return created.format('dddd. MMM. Do.  h:mm a');
     },
-    addComment() {
-      this.$store.commit('addComment', {
-        id: 0,
-        imgSrc: 'https://pbs.twimg.com/media/D0AEcLJVYAErhXl.jpg',
-        name: 'Name',
-        text: this.newText,
-        createdAt: '2020-10-24T03:09:34.345Z',
+
+    save() {
+      this.$emit('add-comment', {
+        id: this.newCommentId,
+        imgSrc: this.profileImg,
+        name: 'WOW',
+        text: this.newComment,
+        createdAt: moment().toISOString(),
       });
-      this.newText = '';
+      this.newComment = '';
     },
   },
 };
@@ -122,5 +175,9 @@ export default {
     font-size: 13px;
     text-decoration-line: underline;
   }
+}
+.edit-form {
+  margin: 10px 0 0;
+  padding: 0;
 }
 </style>

@@ -45,7 +45,7 @@ export default new Vuex.Store({
             id: 1,
             imgSrc:
               'https://cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UVBJZL3RXAB36BDSHVM3MW2WNY.jpg',
-            name: 'yourNickname',
+            name: '은서',
             text: 'hi my name is you',
             createdAt: '2020-10-27T08:05:34.435Z',
           },
@@ -74,7 +74,7 @@ export default new Vuex.Store({
             id: 1,
             imgSrc:
               'https://cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UVBJZL3RXAB36BDSHVM3MW2WNY.jpg',
-            name: 'yourNickname',
+            name: '은서',
             text: 'hi my name is you',
             createdAt: '2020-10-27T08:05:34.435Z',
           },

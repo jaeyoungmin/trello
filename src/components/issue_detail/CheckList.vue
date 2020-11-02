@@ -24,12 +24,30 @@
         v-for="(task, i) in tasks"
         :key="i"
         v-model="task.complete"
-        label="task.title"
+        :label="task.title"
         class="check-list-item"
       ></v-checkbox>
     </div>
-    <div class="buttons-wrapper">
-      <v-btn style="margin-left:35px" elevation="0" small>Add an item</v-btn>
+    <div class="buttons-wrapper" style="margin-left:35px">
+      <v-btn elevation="0" small @click="isEdit = true" v-if="!isEdit"
+        >Add an item</v-btn
+      >
+      <div v-else>
+        <v-textarea
+          solo
+          v-model="newItem"
+          outlined
+          flat
+          auto-grow
+          rows="1"
+          @keyup.enter="save"
+          placeholder="Add an item"
+        ></v-textarea>
+        <v-btn small @click="save" color="green" dark>add</v-btn>
+        <v-btn icon small @click="isEdit = false"
+          ><v-icon>mdi-close</v-icon></v-btn
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +58,8 @@ export default {
   props: ['tasks'],
   data() {
     return {
+      isEdit: false,
+      newItem: '',
       // tasks: [
       //   { title: 'task1', complete: true },
       //   { title: 'task2', complete: false },
@@ -51,6 +71,24 @@ export default {
     progress() {
       let completeNum = this.tasks.filter((el) => el.complete).length;
       return (completeNum / this.tasks.length) * 100;
+    },
+    newCheckItemId() {
+      return (
+        this.tasks.reduce((acc, cur) => {
+          acc = Math.max(acc, cur.id);
+          return acc;
+        }, 0) + 1
+      );
+    },
+  },
+  methods: {
+    save() {
+      this.$emit('add-check-item', {
+        id: this.newCheckItemId,
+        title: this.newItem,
+        complete: false,
+      });
+      this.newItem = '';
     },
   },
 };

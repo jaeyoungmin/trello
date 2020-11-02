@@ -21,8 +21,14 @@
               :init-descr="currentIssue.description"
               @change-descr="changeDescr"
             />
-            <CheckList :tasks="currentIssue.checklist" />
-            <Activity :activities="currentIssue.activities" />
+            <CheckList
+              :tasks="currentIssue.checklist"
+              @add-check-item="addCheckListItem"
+            />
+            <Activity
+              :activities="currentIssue.activities"
+              @add-comment="addComment"
+            />
           </v-col>
           <v-col cols="4" class="right-side">
             <Action />
@@ -74,6 +80,16 @@ export default {
       this.$store.commit('editIssue', clone);
     },
     //npm install lodash 사용
+    addCheckListItem(item) {
+      let clone = _.cloneDeep(this.currentIssue);
+      clone.checklist.push(item);
+      this.$store.commit('editIssue', clone);
+    },
+    addComment(comment) {
+      let clone = _.cloneDeep(this.currentIssue);
+      clone.activities.push(comment);
+      this.$store.commit('editIssue', clone);
+    },
   },
 };
 </script>

@@ -10,7 +10,7 @@
     <div>
       <p v-if="!isEdit">{{ descr }}</p>
       <div class="edit-form" v-else>
-        <v-textarea v-model="descr" solo></v-textarea>
+        <v-textarea v-model="descr" solo auto-grow rows="1"></v-textarea>
         <v-btn small color="green" dark @click="save">Save</v-btn>
         <v-btn small icon @click="(isEdit = false), (descr = initDescr)"
           ><v-icon>mdi-close</v-icon></v-btn
@@ -28,6 +28,7 @@ export default {
     return {
       isEdit: false,
       descr: this.initDescr,
+      newTask: '',
     };
   },
   methods: {
