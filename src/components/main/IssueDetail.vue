@@ -28,11 +28,13 @@
             <Activity
               :activities="currentIssue.activities"
               @add-comment="addComment"
+              @edit-comment="editComment"
+              @delete-comment="deleteComment"
             />
           </v-col>
           <v-col cols="4" class="right-side">
             <Action />
-            <Actions />
+            <Actions @move="moveToList" @copy="copyToList" />
           </v-col>
         </v-row>
       </v-card>
@@ -48,7 +50,7 @@ export default {
   data() {
     return {};
   },
-  props: ['issues'],
+  props: ['issues', 'lists'],
   computed: { ...mapState(['isDetailShow', 'currentIssue']) },
   components: {
     DueDate: () => import('@/components/issue_detail/DueDate.vue'),
@@ -89,6 +91,28 @@ export default {
       let clone = _.cloneDeep(this.currentIssue);
       clone.activities.push(comment);
       this.$store.commit('editIssue', clone);
+    },
+    editComment(comment) {
+      let clone = _.cloneDeep(this.currentIssue);
+      let target = clone.activities.find((el) => el.id === comment.id);
+      target.text = comment.text;
+      this.$store.commit('editIssue', clone);
+    },
+    deleteComment(id) {
+      let clone = _.cloneDeep(this.currentIssue);
+      let targetIndex = clone.activities.findIndex((el) => el.id === id);
+      clone.activities.splice(targetIndex, 1);
+      this.$store.commit('editIssue', clone);
+    },
+    moveToList(item) {
+      let clone = _.cloneDeep(this.currentIssue);
+      clone.listId = item.id;
+      this.$store.commit('editIssue', clone);
+    },
+    copyToList(item) {
+      let clone = _.cloneDeep(this.currentIssue);
+      clone.listId = item.id;
+      this.$store.commit('pushItem', clone);
     },
   },
 };

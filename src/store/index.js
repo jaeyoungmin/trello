@@ -52,8 +52,8 @@ export default new Vuex.Store({
         ],
       },
       {
-        id: 1,
-        listId: 1,
+        id: 0,
+        listId: 0,
         title: 'Please',
         description: ' make log in page',
         dueDate: '2020-10-28',
@@ -81,8 +81,8 @@ export default new Vuex.Store({
         ],
       },
       {
-        id: 2,
-        listId: 1,
+        id: 0,
+        listId: 0,
         title: 'WOW',
         description: 'Hungry',
         dueDate: '2020-10-10',
@@ -130,6 +130,9 @@ export default new Vuex.Store({
       let target = state.issues.find((el) => el.id === payload.id);
       Object.assign(target, payload);
     }, //뮤테이션을 여러개 나누지 않고 한번에 state에 payload 시키기
+    pushItem(state, payload) {
+      state.issues.push(payload);
+    },
   },
   actions: {},
   modules: {},

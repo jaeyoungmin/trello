@@ -30,8 +30,36 @@
             <strong>{{ comment.name }}</strong
             ><span class="date-text">{{ formatDate(comment.createdAt) }}</span>
           </p>
-          <div>
-            <v-text-field
+          <v-card class="text-card">
+            <p v-if="!(isEdit === i)">{{ comment.text }}</p>
+            <div v-else>
+              <v-textarea
+                solo
+                flat
+                auto-grow
+                v-model="editedComment"
+                row-height="15"
+                rows="2"
+              ></v-textarea>
+              <v-btn
+                x-small
+                color="green"
+                dark
+                elevation="0"
+                @click="edit(comment.id)"
+                >save</v-btn
+              >
+              <v-btn icon x-small @click="isEdit = undefined"
+                ><v-icon>mdi-close</v-icon></v-btn
+              >
+            </div>
+          </v-card>
+          <div class="activity-actions">
+            <!-- <button @click="isEdit = i">Edit</button> -->
+            <button @click="toEdit(comment.text, i)">Edit</button>
+            <button @click="deleteComment(comment.id)">Delete</button>
+          </div>
+          <!-- <v-text-field
               class="comment-input mb-2"
               v-model="comment.text"
               :readonly="isEdit !== i"
@@ -43,28 +71,7 @@
           <div class="activity-actions">
             <button class="mr-2" @click="isEdit = i">Edit</button>
             <button>Delete</button>
-          </div>
-
-          <!-- <v-card class="text-card" v-model="editComment">
-            <p>{{ comment.text }}</p>
-          </v-card> -->
-          <!-- <div class="activity-actions">
-            <div class="edit-form">
-              <v-textarea
-                flat
-                solo
-                outlined
-                auto-grow
-                rows="1"
-                v-if="isEdit == i"
-              ></v-textarea>
-            </div>
-            <button @click="isEdit = i">
-              Edit
-            </button>
-            <button>Delete</button>
-          </div>
-        </div> -->
+          </div> -->
         </div>
       </v-row>
     </div>
@@ -80,8 +87,8 @@ export default {
   data() {
     return {
       newComment: '',
-      isEdit: false,
-      editComment: '',
+      isEdit: undefined,
+      editedComment: '',
       profileImg:
         'https://jmagazine.joins.com/_data/photo/2019/04/2949993301_QGcF14Px_1.jpg',
       // activities: [
@@ -119,6 +126,10 @@ export default {
     },
   },
   methods: {
+    toEdit(comment, index) {
+      this.isEdit = index;
+      this.editedComment = comment;
+    },
     formatDate(date) {
       let created = moment(date);
       //console.log(created.format('dddd, MMM, Do'));
@@ -127,7 +138,10 @@ export default {
       return created.format('dddd. MMM. Do. [at] HH:mm a');
       // return created.format('dddd. MMM. Do.  h:mm a');
     },
-
+    edit(id) {
+      this.$emit('edit-comment', { text: this.editedComment, id: id });
+      this.isEdit = undefined;
+    },
     save() {
       this.$emit('add-comment', {
         id: this.newCommentId,
@@ -137,6 +151,9 @@ export default {
         createdAt: moment().toISOString(),
       });
       this.newComment = '';
+    },
+    deleteComment(id) {
+      this.$emit('delete-comment', id);
     },
   },
 };
