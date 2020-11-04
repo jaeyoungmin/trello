@@ -18,12 +18,12 @@ export default new Vuex.Store({
       },
       {
         id: 2,
-        title: 'I wanna go home',
+        title: 'home',
       },
     ],
     issues: [
       {
-        id: 0,
+        id: 1,
         listId: 0,
         title: 'Go to home',
         description: ' make log in page',
@@ -52,7 +52,7 @@ export default new Vuex.Store({
         ],
       },
       {
-        id: 0,
+        id: 2,
         listId: 0,
         title: 'Please',
         description: ' make log in page',
@@ -81,7 +81,7 @@ export default new Vuex.Store({
         ],
       },
       {
-        id: 0,
+        id: 3,
         listId: 0,
         title: 'WOW',
         description: 'Hungry',
@@ -115,6 +115,7 @@ export default new Vuex.Store({
     toggleIsDetailShow(state) {
       state.isDetailShow = !state.isDetailShow;
     },
+
     setCurrentIssue(state, payload) {
       state.currentIssue = payload;
     },
@@ -130,8 +131,16 @@ export default new Vuex.Store({
       let target = state.issues.find((el) => el.id === payload.id);
       Object.assign(target, payload);
     }, //뮤테이션을 여러개 나누지 않고 한번에 state에 payload 시키기
-    pushItem(state, payload) {
+    addIssue(state, payload) {
       state.issues.push(payload);
+    },
+    addList(state, payload) {
+      state.lists.push(payload);
+    },
+    deleteIssue(state, payload) {
+      let targetIndex = state.issues.findIndex((el) => el.id === payload);
+      state.issues.splice(targetIndex, 1);
+      state.isDetailShow = false;
     },
   },
   actions: {},

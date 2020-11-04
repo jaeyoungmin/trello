@@ -34,7 +34,11 @@
           </v-col>
           <v-col cols="4" class="right-side">
             <Action />
-            <Actions @move="moveToList" @copy="copyToList" />
+            <Actions
+              @move="moveToList"
+              @copy="copyToList"
+              @delete-issue="deleteIssue"
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -50,8 +54,18 @@ export default {
   data() {
     return {};
   },
-  props: ['issues', 'lists'],
-  computed: { ...mapState(['isDetailShow', 'currentIssue']) },
+  props: ['lists'],
+  computed: {
+    ...mapState(['isDetailShow', 'currentIssue', 'issues']),
+    newIssueId() {
+      return (
+        this.issues.reduce((acc, cur) => {
+          acc = Math.max(acc, cur.id);
+          return acc;
+        }, 0) + 1
+      );
+    },
+  },
   components: {
     DueDate: () => import('@/components/issue_detail/DueDate.vue'),
     Description: () => import('@/components/issue_detail/Description.vue'),
@@ -111,8 +125,12 @@ export default {
     },
     copyToList(item) {
       let clone = _.cloneDeep(this.currentIssue);
+      // clone.id = this.newIssueId;
       clone.listId = item.id;
-      this.$store.commit('pushItem', clone);
+      this.$store.commit('addIssue', clone);
+    },
+    deleteIssue() {
+      this.$store.commit('deleteIssue', this.currentIssue.id);
     },
   },
 };

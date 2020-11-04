@@ -14,10 +14,31 @@
       ></issue-card>
     </div>
     <div class="btn-wrapper">
-      <v-btn text color="#5e6c84">
+      <v-btn
+        small
+        text
+        color="#5e6c84"
+        v-if="!isAddCard"
+        @click="isAddCard = true"
+      >
         <v-icon>mdi-plus</v-icon>
-        Add a card
+        Add another card
       </v-btn>
+      <div v-else>
+        <v-textarea
+          v-model="newCardTitle"
+          placeholder="Enter a title for this card... "
+          solo
+          auto-grow
+          hide-details
+          class="mb-2 elevation-0"
+          rows="2"
+        ></v-textarea>
+        <v-btn color="green" dark @click="addCard">Add Card</v-btn>
+        <v-btn icon @click="isAddCard = false"
+          ><v-icon>mdi-close</v-icon></v-btn
+        >
+      </div>
     </div>
   </v-card>
 </template>
@@ -26,6 +47,12 @@
 import { mapState } from 'vuex';
 export default {
   name: 'ListBox',
+  data() {
+    return {
+      newCardTitle: '',
+      isAddCard: false,
+    };
+  },
   components: {
     IssueCard: () => import('@/components/main/IssueCard.vue'),
   },
@@ -35,9 +62,29 @@ export default {
     relatedIssues() {
       return this.issues.filter((el) => el.listId === this.list.id);
     },
+    newIssueId() {
+      return (
+        this.issues.reduce((acc, cur) => {
+          acc = Math.max(acc, cur.id);
+          return acc;
+        }, 0) + 1
+      );
+    },
   },
   methods: {
-    addList() {},
+    addCard() {
+      let defaultIssueForm = {
+        id: this.newIssueId,
+        listId: this.list.id,
+        title: this.newCardTitle,
+        description: '',
+        dueDate: '',
+        checklist: [],
+        activities: [],
+      };
+      this.$store.commit('addIssue', defaultIssueForm);
+      this.newCardTitle = '';
+    },
   },
 
   // props: ['lists', 'issues'],
@@ -51,7 +98,7 @@ export default {
 
 <style lang="scss" scoped>
 .list-box {
-  margin: 30px;
+  margin: 10px;
   background-color: #ebecf0;
 }
 .box-header {
@@ -65,5 +112,11 @@ export default {
 }
 .item-list-wrapper {
   padding: 5px;
+}
+.title-wrapper {
+  margin: -5px 0px 10px;
+}
+.title-btn {
+  margin: 5px 0;
 }
 </style>
